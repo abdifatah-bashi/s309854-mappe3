@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">s309854-mappe3</string>
     <string name="title_activity_kart_aktivitet">Kart</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello Reservasjon liste fragment</string>
 </resources>
