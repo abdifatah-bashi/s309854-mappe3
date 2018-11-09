@@ -1,8 +1,5 @@
 package oslomet.no.s309854_mappe3;
 
-import android.content.Intent;
-import android.graphics.Color;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -12,8 +9,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.Toolbar;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -22,56 +17,43 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
 public class KartAktivitet extends FragmentActivity implements OnMapReadyCallback {
 
     private ReservasjonListeFragment reservasjonListeFragment;
+    private ReservasjonFragment reservasjonFragment;
     private BottomNavigationView mainNav;
-    private FrameLayout mainFrame;
     private GoogleMap mMap;
-    public String reservasjon = "";
-    public int antallElement = 0;
-    getJSON task = new getJSON();
+    Service service = new Service();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aktivitet_kart);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
         reservasjonListeFragment = new ReservasjonListeFragment();
+        reservasjonFragment = new ReservasjonFragment();
         mainNav = findViewById(R.id.main_nav);
-        mainFrame = findViewById(R.id.main_frame);
 
         mainNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()){
-
-
                     case R.id.home :
                         mapFragment.getView().setVisibility(View.VISIBLE);
                         hideFragment(reservasjonListeFragment);
-                       // reservasjonListeFragment.getView().setVisibility(View.INVISIBLE);
-
+                        hideFragment(reservasjonFragment);
                         return true;
 
-
+                    case R.id.reserver:
+                        setFragment(reservasjonFragment);
+                        mapFragment.getView().setVisibility(View.INVISIBLE);
+                        return true;
                     case R.id.liste:
                         setFragment(reservasjonListeFragment);
                         mapFragment.getView().setVisibility(View.INVISIBLE);
@@ -103,20 +85,6 @@ public class KartAktivitet extends FragmentActivity implements OnMapReadyCallbac
         fragmentTransaction.commit();
     }
 
-
-
-
-
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -134,20 +102,12 @@ public class KartAktivitet extends FragmentActivity implements OnMapReadyCallbac
         LatLng P32 = new LatLng(   59.9200718, 10.735783800000036);
         LatLng P48 = new LatLng(   59.9214455, 10.732669999999985);
         LatLng P52 = new LatLng(   59.9223554, 10.732217699999978);
-
-
-
-
-
             for(Reservasjon r: reservasjoner ){
                 String reservasjonInfo = "Navn: " + r.getNavn() + "\n" +
                         "Rom: " + r.getRom() + "\n" +
                         "Dato " + r.getDato() + "\n" +
                         "Fra: " + r.getFra()+ "\n" +
                         "Til: " + r.getTil() + "\n" ;
-
-
-
                 switch (r.getBygning() ){
                     case "P32": p32Reservasjon = reservasjonInfo;
                         break;
@@ -181,8 +141,6 @@ public class KartAktivitet extends FragmentActivity implements OnMapReadyCallbac
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
                 .snippet(p52Reservasjon));
 
-
-
         mMap.setInfoWindowAdapter(new BalloonAdapter(getLayoutInflater()));
         float zoomLevel = 16.0f;
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(P32, zoomLevel));
@@ -191,77 +149,25 @@ public class KartAktivitet extends FragmentActivity implements OnMapReadyCallbac
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(P48, zoomLevel));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(P52, zoomLevel));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(P32, zoomLevel));
-
-
-    }
-
-    private class getJSON extends AsyncTask<String, Void,String> {
-        JSONObject jsonObject;
-        @Override
-        protected String doInBackground(String... urls) { String retur = "";
-            String s = "";
-            int antall =0;
-            ArrayList<String> liste = new ArrayList<>();
-            String output = "";
-            for (String url : urls) { try {
-                URL urlen = new URL(urls[0]); HttpURLConnection conn = (HttpURLConnection)
-                        urlen.openConnection(); conn.setRequestMethod("GET");
-                conn.setRequestProperty("Accept", "application/json"); if (conn.getResponseCode() != 200) {
-                    throw new RuntimeException("Failed : HTTP error code : "+ conn.getResponseCode());
-                }
-
-                BufferedReader br = new BufferedReader(new InputStreamReader( (conn.getInputStream())));
-                System.out.println("Output from Server .... \n"); while ((s = br.readLine()) != null) {
-                    output = output + s;
-                }
-                conn.disconnect(); try {
-                    JSONArray mat = new JSONArray(output);
-                    for (int i = 0; i < mat.length(); i++) {
-                        JSONObject jsonobject = mat.getJSONObject(i);
-                        String navn = jsonobject.getString("navn");
-                        String bygning = jsonobject.getString("bygning");
-                        String romNavn = jsonobject.getString("rom");
-                        String dato = jsonobject.getString("dato");
-                        String fra = jsonobject.getString("fra_klokkeslett");
-                        String til = jsonobject.getString("til_klokkeslett");
-
-                        retur = navn + "--" + bygning + "--" +romNavn + "--"+ dato + "--" + fra + "--" + til + "---"  ;
-                        liste.add(antallElement, retur);
-                        antallElement++;
-
-
-                    }
-                    return liste.toString();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                return retur;
-            } catch (Exception e) {
-                return "Noe gikk feil"; }
-            }
-            return liste.toString();
-        }
-
-        @Override
-        protected void onPostExecute(String ss) {
-
-        }
     }
 
     public ArrayList<Reservasjon> hentReservasjoner(){
         String result = null;
         ArrayList<Reservasjon> reservasjoner = new ArrayList<>();
         try {
-            result = task.execute(new
+            result = service.execute(new
                     String[]{"http://student.cs.hioa.no/~s309854/jsonout.php"}).get();
+            int antallElement = result.split("---").length-1;
+            Log.i("antallElementTest: ", antallElement + "");
             for (int i = 0; i <antallElement ; i++) {
 
                 String navn = result.split("---")[i].split("--")[0].replace("[" , "");
                 String bygning = result.split("---")[i].split("--")[1];
                 String rom = result.split("---")[i].split("--")[2];
                 String dato = result.split("---")[i].split("--")[3];
-                String fra = result.split("---")[i].split("--")[4];
-                String til = result.split("---")[i].split("--")[5];
+                String tidspunkt = result.split("---")[i].split("--")[4];
+                String fra = tidspunkt.split("-")[0];
+                String til = tidspunkt.split("-")[1];
                 Log.i("testN", navn + " , " + bygning);
                 reservasjoner.add(i, new Reservasjon(navn, bygning, rom, dato, fra, til));
             }
@@ -275,6 +181,4 @@ public class KartAktivitet extends FragmentActivity implements OnMapReadyCallbac
         return reservasjoner;
 
     }
-
-
 }

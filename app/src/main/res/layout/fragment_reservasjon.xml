@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bgColor"
+    tools:context=".ReservasjonFragment">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".NyRestaurantAktivitet">
+
+
+
+
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/navn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="15dp"
+            android:layout_marginTop="25dp"
+            android:hint="Navn"
+            android:textSize="20sp" />
+
+
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/bygning"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/navn"
+            android:popupBackground="@color/bgColor"
+            android:layout_marginBottom="15dp"
+            android:hint="Adresse"
+            android:textSize="20sp" />
+
+
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/rom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/bygning"
+            android:popupBackground="@color/bgColor"
+            android:layout_marginBottom="15dp"
+            android:textSize="20sp" />
+
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/dato"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/rom"
+            android:layout_marginBottom="15dp"
+            android:background="@color/bgColor"
+            android:onClick="velgDato"
+            android:drawableLeft="@drawable/calendar"
+            android:textAlignment="textStart"
+            android:text=" Klikk her for å velge Dato"
+            android:textSize="20sp" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/time_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/dato"
+            android:background="@color/bgColor"
+            android:backgroundTint="@color/bgColor"
+            android:layout_marginBottom="15dp"
+            android:text="Velg ønsket time "
+            android:textSize="20sp" />
+
+
+        <!-- Radio Buttons for numbers of questions -->
+
+
+            <RadioGroup
+
+                android:id="@+id/radio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/time_label"
+                android:orientation="vertical">
+
+
+                <RadioButton
+                    android:id="@+id/time1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:text="08:30 - 10:30"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <RadioButton
+                    android:id="@+id/time2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:text="10:30 - 12:15"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+
+
+
+                <RadioButton
+                    android:id="@+id/time3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:text="12:30 - 14:15"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <RadioButton
+                    android:id="@+id/time4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:text="14:30 - 16:15"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+
+
+            </RadioGroup>
+
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/reserver_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/radio"
+            android:layout_marginTop="15dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:text="RESERVER"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+
+            />
+    </RelativeLayout>
+
+</FrameLayout>

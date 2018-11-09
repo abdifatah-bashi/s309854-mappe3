@@ -19,6 +19,10 @@ allprojects {
     repositories {
         google()
         jcenter()
+        // Pop up alert box
+        maven { url "https://jitpack.io" }
+        // Circular alert animation
+        maven { url 'https://jitpack.io' }
     }
 }
 
