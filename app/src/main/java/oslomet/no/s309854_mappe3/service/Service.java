@@ -17,14 +17,13 @@ public class Service extends AsyncTask<String, Void,String> {
     @Override
     protected String doInBackground(String... urls) { String retur = "";
         String s = "";
-        int antall =0;
-        int antallElement =0;
-        ArrayList<String> liste = new ArrayList<>();
+        int numberOfElements =0;
+        ArrayList<String> list = new ArrayList<>();
         String output = "";
         for (String url : urls) { try {
-            URL urlen = new URL(urls[0]);
+            URL theUrl = new URL(urls[0]);
             HttpURLConnection conn = (HttpURLConnection)
-                    urlen.openConnection();
+                    theUrl.openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Accept", "application/json");
             if (conn.getResponseCode() != 200) {
@@ -36,23 +35,21 @@ public class Service extends AsyncTask<String, Void,String> {
                 output = output + s;
             }
             conn.disconnect(); try {
-                JSONArray mat = new JSONArray(output);
-                for (int i = 0; i < mat.length(); i++) {
-                    JSONObject jsonobject = mat.getJSONObject(i);
-                    String navn = jsonobject.getString("navn");
-                    String bygning = jsonobject.getString("bygning");
-                    String romNavn = jsonobject.getString("rom");
-                    String dato = jsonobject.getString("dato");
-                    String tidspunkt = jsonobject.getString("tidspunkt");
+                JSONArray json = new JSONArray(output);
+                for (int i = 0; i < json.length(); i++) {
+                    JSONObject jsonobject = json.getJSONObject(i);
+                    String name = jsonobject.getString("navn");
+                    String building = jsonobject.getString("bygning");
+                    String room = jsonobject.getString("rom");
+                    String date = jsonobject.getString("dato");
+                    String time = jsonobject.getString("tidspunkt");
 
-
-                    retur = navn + "--" + bygning + "--" +romNavn + "--"+ dato + "--" + tidspunkt + "---"  ;
-                    liste.add(antallElement, retur);
-                    antallElement++;
-
+                    retur = name + "--" + building + "--" +room + "--"+ date + "--" + time + "---"  ;
+                    list.add(numberOfElements, retur);
+                    numberOfElements++;
 
                 }
-                return liste.toString();
+                return list.toString();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -60,7 +57,7 @@ public class Service extends AsyncTask<String, Void,String> {
         } catch (Exception e) {
             return "Noe gikk feil"; }
         }
-        return liste.toString();
+        return list.toString();
     }
 
     @Override
