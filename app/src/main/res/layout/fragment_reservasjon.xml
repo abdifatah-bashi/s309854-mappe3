@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bgColor"
-    tools:context=".ReservasjonFragment">
+    tools:context=".fragment.NewReservationFragment">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -13,11 +13,8 @@
         android:layout_height="match_parent"
         tools:context=".NyRestaurantAktivitet">
 
-
-
-
         <android.support.v7.widget.AppCompatEditText
-            android:id="@+id/navn"
+            android:id="@+id/name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -28,11 +25,11 @@
 
 
         <android.support.v7.widget.AppCompatSpinner
-            android:id="@+id/bygning"
+            android:id="@+id/building"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_below="@+id/navn"
+            android:layout_below="@+id/name"
             android:popupBackground="@color/bgColor"
             android:layout_marginBottom="15dp"
             android:hint="Adresse"
@@ -40,22 +37,22 @@
 
 
         <android.support.v7.widget.AppCompatSpinner
-            android:id="@+id/rom"
+            android:id="@+id/room"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_below="@+id/bygning"
+            android:layout_below="@+id/building"
             android:popupBackground="@color/bgColor"
             android:layout_marginBottom="15dp"
             android:textSize="20sp" />
 
 
         <android.support.v7.widget.AppCompatButton
-            android:id="@+id/dato"
+            android:id="@+id/date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_below="@+id/rom"
+            android:layout_below="@+id/room"
             android:layout_marginBottom="15dp"
             android:background="@color/bgColor"
             android:onClick="velgDato"
@@ -69,7 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_below="@+id/dato"
+            android:layout_below="@+id/date"
             android:background="@color/bgColor"
             android:backgroundTint="@color/bgColor"
             android:layout_marginBottom="15dp"

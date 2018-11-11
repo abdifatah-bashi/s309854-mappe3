@@ -1,5 +1,6 @@
 package oslomet.no.s309854_mappe3;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -17,13 +18,23 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
-public class KartAktivitet extends FragmentActivity implements OnMapReadyCallback {
+import oslomet.no.s309854_mappe3.adapter.MapMarkerViewAdapter;
+import oslomet.no.s309854_mappe3.fragment.NewReservationFragment;
+import oslomet.no.s309854_mappe3.fragment.ReservationListFragment;
+import oslomet.no.s309854_mappe3.model.Reservation;
+import oslomet.no.s309854_mappe3.service.Service;
 
-    private ReservasjonListeFragment reservasjonListeFragment;
-    private ReservasjonFragment reservasjonFragment;
+public class MapActivity extends FragmentActivity implements OnMapReadyCallback {
+
+    private ReservationListFragment reservationListFragment;
+    private NewReservationFragment newReservationFragment;
     private BottomNavigationView mainNav;
     private GoogleMap mMap;
     Service service = new Service();
@@ -35,9 +46,8 @@ public class KartAktivitet extends FragmentActivity implements OnMapReadyCallbac
         final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-        reservasjonListeFragment = new ReservasjonListeFragment();
-        reservasjonFragment = new ReservasjonFragment();
+        reservationListFragment = new ReservationListFragment();
+        newReservationFragment = new NewReservationFragment();
         mainNav = findViewById(R.id.main_nav);
 
         mainNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -45,17 +55,16 @@ public class KartAktivitet extends FragmentActivity implements OnMapReadyCallbac
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()){
                     case R.id.home :
-                        mapFragment.getView().setVisibility(View.VISIBLE);
-                        hideFragment(reservasjonListeFragment);
-                        hideFragment(reservasjonFragment);
+                        Intent intent = new Intent(getApplicationContext(), MapActivity.class);
+                        startActivity(intent);
                         return true;
 
                     case R.id.reserver:
-                        setFragment(reservasjonFragment);
+                        visFragment(newReservationFragment);
                         mapFragment.getView().setVisibility(View.INVISIBLE);
                         return true;
                     case R.id.liste:
-                        setFragment(reservasjonListeFragment);
+                        visFragment(reservationListFragment);
                         mapFragment.getView().setVisibility(View.INVISIBLE);
                         return  true;
 
@@ -70,7 +79,9 @@ public class KartAktivitet extends FragmentActivity implements OnMapReadyCallbac
 
     }
 
-    public void setFragment(Fragment fragment){
+
+
+    public void visFragment(Fragment fragment){
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.main_frame, fragment);
         if(fragment.isHidden()){
@@ -79,17 +90,12 @@ public class KartAktivitet extends FragmentActivity implements OnMapReadyCallbac
         fragmentTransaction.commit();
     }
 
-    public void hideFragment(Fragment fragment){
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.hide(fragment);
-        fragmentTransaction.commit();
-    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         String output= "";
-        ArrayList<Reservasjon> reservasjoner = hentReservasjoner();
+        ArrayList<Reservation> reservasjoner = hentReservasjoner();
         String p32Reservasjon = "Ingen reservasjon i dag!";
         String p35Reservasjon = "Ingen reservasjon i dag!";
         String p46Reservasjon = "Ingen reservasjon i dag!";
@@ -102,26 +108,43 @@ public class KartAktivitet extends FragmentActivity implements OnMapReadyCallbac
         LatLng P32 = new LatLng(   59.9200718, 10.735783800000036);
         LatLng P48 = new LatLng(   59.9214455, 10.732669999999985);
         LatLng P52 = new LatLng(   59.9223554, 10.732217699999978);
-            for(Reservasjon r: reservasjoner ){
-                String reservasjonInfo = "Navn: " + r.getNavn() + "\n" +
-                        "Rom: " + r.getRom() + "\n" +
-                        "Dato " + r.getDato() + "\n" +
-                        "Fra: " + r.getFra()+ "\n" +
-                        "Til: " + r.getTil() + "\n" ;
-                switch (r.getBygning() ){
-                    case "P32": p32Reservasjon = reservasjonInfo;
+            for(Reservation r: reservasjoner ){
+                String reservasjonInfo = "Navn: " + r.getName() + "\n" +
+                        "Rom: " + r.getRoom() + "\n" +
+                        "Dato " + r.getDate() + "\n" +
+                        "Fra: " + r.getFrom()+ "\n" +
+                        "Til: " + r.getTo() + "\n" ;
+                switch (r.getBuilding() ){
+                    case "P32":
+                        if(hentDagensDato().equals(r.getDate())){
+                            p32Reservasjon = reservasjonInfo;
+                        }
                         break;
-                    case "P35": p35Reservasjon = reservasjonInfo;
+                    case "P35":
+                        if(hentDagensDato().equals(r.getDate())){
+                            p35Reservasjon = reservasjonInfo;
+                        }
                         break;
-                    case "P46": p46Reservasjon = reservasjonInfo;
+                    case "P46":
+                        if(hentDagensDato().equals(r.getDate())){
+                            p46Reservasjon = reservasjonInfo;
+                        }
                         break;
-                    case "P48": p48Reservasjon = reservasjonInfo;
+                    case "P48":
+                        if(hentDagensDato().equals(r.getDate())){
+                            p48Reservasjon = reservasjonInfo;
+                        }
                         break;
-                    case "PH52": p52Reservasjon = reservasjonInfo;
+                    case "PH52":
+                        if(hentDagensDato().equals(r.getDate())){
+                            p52Reservasjon = reservasjonInfo;
+                        }
                         break;
 
                 }
             }
+
+
 
 
         mMap.addMarker(new MarkerOptions().position(P32).title("P32")
@@ -141,7 +164,7 @@ public class KartAktivitet extends FragmentActivity implements OnMapReadyCallbac
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
                 .snippet(p52Reservasjon));
 
-        mMap.setInfoWindowAdapter(new BalloonAdapter(getLayoutInflater()));
+        mMap.setInfoWindowAdapter(new MapMarkerViewAdapter(getLayoutInflater()));
         float zoomLevel = 16.0f;
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(P32, zoomLevel));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(P35, zoomLevel));
@@ -151,9 +174,9 @@ public class KartAktivitet extends FragmentActivity implements OnMapReadyCallbac
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(P32, zoomLevel));
     }
 
-    public ArrayList<Reservasjon> hentReservasjoner(){
+    public ArrayList<Reservation> hentReservasjoner(){
         String result = null;
-        ArrayList<Reservasjon> reservasjoner = new ArrayList<>();
+        ArrayList<Reservation> reservasjoner = new ArrayList<>();
         try {
             result = service.execute(new
                     String[]{"http://student.cs.hioa.no/~s309854/jsonout.php"}).get();
@@ -169,7 +192,7 @@ public class KartAktivitet extends FragmentActivity implements OnMapReadyCallbac
                 String fra = tidspunkt.split("-")[0];
                 String til = tidspunkt.split("-")[1];
                 Log.i("testN", navn + " , " + bygning);
-                reservasjoner.add(i, new Reservasjon(navn, bygning, rom, dato, fra, til));
+                reservasjoner.add(i, new Reservation(navn, bygning, rom, dato, fra, til));
             }
 
         } catch (InterruptedException e) {
@@ -179,6 +202,11 @@ public class KartAktivitet extends FragmentActivity implements OnMapReadyCallbac
         }
 
         return reservasjoner;
+
+    }
+
+    public String hentDagensDato(){
+        return new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
 
     }
 }

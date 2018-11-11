@@ -1,4 +1,4 @@
-package oslomet.no.s309854_mappe3;
+package oslomet.no.s309854_mappe3.service;
 
 import android.os.AsyncTask;
 

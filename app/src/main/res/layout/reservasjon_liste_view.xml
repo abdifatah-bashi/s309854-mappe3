@@ -5,7 +5,7 @@
     >
 
     <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/navn"
+        android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -17,52 +17,52 @@
         android:textStyle="bold" />
 
     <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/bygning"
+        android:id="@+id/building"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/navn"
-        android:layout_below="@+id/navn"
+        android:layout_alignStart="@+id/name"
+        android:layout_below="@+id/name"
         android:text="Bygning"
         android:textSize="16sp"
         android:textStyle="bold" />
 
 
     <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/rom"
+        android:id="@+id/room"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/navn"
-        android:layout_below="@+id/bygning"
+        android:layout_alignStart="@+id/name"
+        android:layout_below="@+id/building"
         android:text="Rom"
         android:textSize="16sp"
         android:textStyle="bold" />
 
     <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/dato"
+        android:id="@+id/date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/navn"
-        android:layout_below="@+id/rom"
+        android:layout_alignStart="@+id/name"
+        android:layout_below="@+id/room"
         android:text="Dato"
         android:textSize="16sp"
         android:textStyle="bold" />
 
     <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/fra"
+        android:id="@+id/from"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/navn"
-        android:layout_below="@+id/dato"
+        android:layout_alignStart="@+id/name"
+        android:layout_below="@+id/date"
         android:text="Fra Klokkeslett"
         android:textSize="16sp"
         android:textStyle="bold" />
 
     <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/til"
+        android:id="@+id/to"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/navn"
-        android:layout_below="@+id/fra"
+        android:layout_alignStart="@+id/name"
+        android:layout_below="@+id/from"
         android:text="Til Klokkeslett"
         android:textSize="16sp"
         android:textStyle="bold" />
