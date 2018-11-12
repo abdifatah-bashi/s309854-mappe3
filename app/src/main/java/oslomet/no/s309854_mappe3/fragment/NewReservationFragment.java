@@ -160,8 +160,8 @@ public class NewReservationFragment extends Fragment {
                                String date, String time) {
         Service service = new Service();
         ReservationListFragment listeFragment = new ReservationListFragment();
-        String url = "http://student.cs.hioa.no/~s309854/jsonin.php?navn=" + name + "&building=" + building
-                + "&room=" + room + "&date=" + date + "&time=" + time;
+        String url = "http://student.cs.hioa.no/~s309854/jsonin.php?navn=" + name + "&bygning=" + building
+                + "&rom=" + room + "&dato=" + date + "&tidspunkt=" + time;
         if (isFormValid(name, building, room, date, time)) {
             service.execute(url);
             showConfirmationAlert();
@@ -214,7 +214,6 @@ public class NewReservationFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 bygning[0] = adapterView.getSelectedItem().toString();
-                Log.i("currentInfo2:", "selected: + " + bygning[0]);
             }
 
             @Override

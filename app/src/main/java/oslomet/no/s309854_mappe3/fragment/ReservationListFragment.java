@@ -3,6 +3,7 @@ package oslomet.no.s309854_mappe3.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ public class ReservationListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_reservasjon_liste, container, false);
         listView = view.findViewById(R.id.listview);
         ArrayList<Reservation> reservations = mapActivity.hentReservasjoner();
+        for(Reservation r: reservations) Log.i("testName:", r.getName());
         adapter = new ReservationListAdapter(getContext(), R.layout.reservasjon_liste_view, reservations);
         listView.setAdapter(adapter);
         return view;

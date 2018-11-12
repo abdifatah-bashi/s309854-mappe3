@@ -20,7 +20,8 @@ public class Service extends AsyncTask<String, Void,String> {
         int numberOfElements =0;
         ArrayList<String> list = new ArrayList<>();
         String output = "";
-        for (String url : urls) { try {
+        for (String url : urls) {
+            try {
             URL theUrl = new URL(urls[0]);
             HttpURLConnection conn = (HttpURLConnection)
                     theUrl.openConnection();
@@ -29,7 +30,6 @@ public class Service extends AsyncTask<String, Void,String> {
             if (conn.getResponseCode() != 200) {
                 throw new RuntimeException("Failed : HTTP error code : "+ conn.getResponseCode());
             }
-
             BufferedReader br = new BufferedReader(new InputStreamReader( (conn.getInputStream())));
             System.out.println("Output from Server .... \n"); while ((s = br.readLine()) != null) {
                 output = output + s;

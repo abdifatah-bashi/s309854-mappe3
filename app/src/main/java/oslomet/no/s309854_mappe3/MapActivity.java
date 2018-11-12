@@ -135,7 +135,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                             p48Reservasjon = reservasjonInfo;
                         }
                         break;
-                    case "PH52":
+                    case "P52":
                         if(hentDagensDato().equals(r.getDate())){
                             p52Reservasjon = reservasjonInfo;
                         }
@@ -181,17 +181,16 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
             result = service.execute(new
                     String[]{"http://student.cs.hioa.no/~s309854/jsonout.php"}).get();
             int antallElement = result.split("---").length-1;
-            Log.i("antallElementTest: ", antallElement + "");
             for (int i = 0; i <antallElement ; i++) {
 
-                String navn = result.split("---")[i].split("--")[0].replace("[" , "");
+                String navn = result.split("---")[i].split("--")[0].replace("[" , "")
+                        .replace(", ", "");
                 String bygning = result.split("---")[i].split("--")[1];
                 String rom = result.split("---")[i].split("--")[2];
                 String dato = result.split("---")[i].split("--")[3];
                 String tidspunkt = result.split("---")[i].split("--")[4];
                 String fra = tidspunkt.split("-")[0];
                 String til = tidspunkt.split("-")[1];
-                Log.i("testN", navn + " , " + bygning);
                 reservasjoner.add(i, new Reservation(navn, bygning, rom, dato, fra, til));
             }
 
