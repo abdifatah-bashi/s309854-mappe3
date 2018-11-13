@@ -14,25 +14,23 @@
         tools:context=".NyRestaurantAktivitet">
 
         <android.support.v7.widget.AppCompatEditText
-            android:id="@+id/name"
+            android:id="@+id/firstname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_marginBottom="15dp"
             android:layout_marginTop="25dp"
-            android:hint="Navn"
+            android:hint="Fornavn"
             android:textSize="20sp" />
 
-
-        <android.support.v7.widget.AppCompatSpinner
-            android:id="@+id/building"
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/lastname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_below="@+id/name"
-            android:popupBackground="@color/bgColor"
             android:layout_marginBottom="15dp"
-            android:hint="Adresse"
+            android:layout_below="@id/firstname"
+            android:hint="Etternavn"
             android:textSize="20sp" />
 
 
@@ -41,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_below="@+id/building"
+            android:layout_below="@+id/lastname"
             android:popupBackground="@color/bgColor"
             android:layout_marginBottom="15dp"
             android:textSize="20sp" />

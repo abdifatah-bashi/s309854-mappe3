@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import java.util.ArrayList;
-import java.util.List;
 
 import oslomet.no.s309854_mappe3.R;
 import oslomet.no.s309854_mappe3.model.Reservation;
@@ -47,14 +46,14 @@ public class ReservationListAdapter extends ArrayAdapter<Reservation> {
     public View getView(final int position, View convertView, ViewGroup parent) {
 
 
-        String name = getItem(position).getName();
-        String building = getItem(position).getBuilding();
+        String firstName = getItem(position).getFirstName();
+        String lastName = getItem(position).getLastName();
         String room = getItem(position).getRoom();
         String date = getItem(position).getDate();
         String from = getItem(position).getFrom();
         String to = getItem(position).getTo();
         final Reservation venn = new Reservation
-                (name, building, room, date, from, to );
+                (firstName, lastName, room, date, from, to );
 
         //ViewHolder object
         ViewHolder holder;
@@ -65,8 +64,8 @@ public class ReservationListAdapter extends ArrayAdapter<Reservation> {
             convertView = inflater.inflate(resource, parent, false);
             holder = new ViewHolder();
 
-            holder.name = convertView.findViewById(R.id.name);
-            holder.building = convertView.findViewById(R.id.building);
+            holder.name = convertView.findViewById(R.id.firstname);
+            holder.building = convertView.findViewById(R.id.lastname);
             holder.room = convertView.findViewById(R.id.room);
             holder.date = convertView.findViewById(R.id.date);
             holder.from = convertView.findViewById(R.id.from);
@@ -79,8 +78,8 @@ public class ReservationListAdapter extends ArrayAdapter<Reservation> {
         }
 
 
-        holder.name.setText("Navn: " + name);
-        holder.building.setText("Bygning: " + building);
+        holder.name.setText("Fornavn: " + firstName);
+        holder.building.setText("Etternavn: " + lastName);
         holder.room.setText("Rom: " + room);
         holder.date.setText("Dato: " + date);
         holder.from.setText("Fra: " + from);

@@ -1,6 +1,7 @@
 package oslomet.no.s309854_mappe3.service;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -11,18 +12,23 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
-public class Service extends AsyncTask<String, Void,String> {
+public class ReservationListService extends AsyncTask<String, Void,String> {
     JSONObject jsonObject;
+    String res = "";
+    String rm= "";
     @Override
-    protected String doInBackground(String... urls) { String retur = "";
+    protected String doInBackground(String... urls) {
+        String retur = "";
         String s = "";
         int numberOfElements =0;
         ArrayList<String> list = new ArrayList<>();
         String output = "";
-        for (String url : urls) {
+
+        for(int i= 0; i<urls.length; i++){
             try {
-            URL theUrl = new URL(urls[0]);
+            URL theUrl = new URL(urls[i]);
             HttpURLConnection conn = (HttpURLConnection)
                     theUrl.openConnection();
             conn.setRequestMethod("GET");
@@ -34,26 +40,17 @@ public class Service extends AsyncTask<String, Void,String> {
             System.out.println("Output from Server .... \n"); while ((s = br.readLine()) != null) {
                 output = output + s;
             }
-            conn.disconnect(); try {
+            conn.disconnect();
+            try {
                 JSONArray json = new JSONArray(output);
-                for (int i = 0; i < json.length(); i++) {
-                    JSONObject jsonobject = json.getJSONObject(i);
-                    String name = jsonobject.getString("navn");
-                    String building = jsonobject.getString("bygning");
-                    String room = jsonobject.getString("rom");
-                    String date = jsonobject.getString("dato");
-                    String time = jsonobject.getString("tidspunkt");
+                list = getReservationInfo(json);
 
-                    retur = name + "--" + building + "--" +room + "--"+ date + "--" + time + "---"  ;
-                    list.add(numberOfElements, retur);
-                    numberOfElements++;
-
-                }
-                return list.toString();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            return retur;
+            output = "";
+
+
         } catch (Exception e) {
             return "Noe gikk feil"; }
         }
@@ -62,6 +59,25 @@ public class Service extends AsyncTask<String, Void,String> {
 
     @Override
     protected void onPostExecute(String ss) {
-
+        Log.i("postReservation:", ss.toString());
     }
+
+    public ArrayList<String> getReservationInfo(JSONArray json) throws JSONException {
+        ArrayList<String> result = new ArrayList<>();
+        int numberOfElements =0;
+        for (int i = 0; i < json.length(); i++) {
+            JSONObject jsonobject = json.getJSONObject(i);
+            String firstname = jsonobject.getString("firstname");
+            String lastname = jsonobject.getString("lastname");
+            String room = jsonobject.getString("room");
+            String date = jsonobject.getString("date");
+            String time = jsonobject.getString("time");
+            String retur = firstname + "," + lastname + "," +room + ","+ date + "," + time + "---"  ;
+            result.add(numberOfElements, retur);
+            numberOfElements++;
+        }
+      return result;
+    }
+
+
 }

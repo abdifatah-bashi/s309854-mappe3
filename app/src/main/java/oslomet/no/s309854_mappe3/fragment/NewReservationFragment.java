@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,13 +29,12 @@ import com.shashank.sony.fancydialoglib.FancyAlertDialog;
 import com.shashank.sony.fancydialoglib.FancyAlertDialogListener;
 import com.shashank.sony.fancydialoglib.Icon;
 
-import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.concurrent.ExecutionException;
 
 import oslomet.no.s309854_mappe3.MapActivity;
 import oslomet.no.s309854_mappe3.R;
-import oslomet.no.s309854_mappe3.model.Reservation;
-import oslomet.no.s309854_mappe3.service.Service;
+import oslomet.no.s309854_mappe3.service.AddReservationService;
 
 public class NewReservationFragment extends Fragment {
 
@@ -49,12 +47,13 @@ public class NewReservationFragment extends Fragment {
     private RadioButton hour2;
     private RadioButton hour3;
     private RadioButton hour4;
-    private Spinner buildingDropdown;
     private Spinner roomDropdown;
     private Button dateBtn;
     private Button reservBtn;
-    private EditText nameEditView;
+    private EditText firstnameEditView;
+    private EditText lastnameEditView;
     private RadioGroup radioGroup;
+    String jsonResult = "";
 
     public NewReservationFragment() { }
 
@@ -70,21 +69,20 @@ public class NewReservationFragment extends Fragment {
         hour2 = view.findViewById(R.id.time2);
         hour3 = view.findViewById(R.id.time3);
         hour4 = view.findViewById(R.id.time4);
-        nameEditView = view.findViewById(R.id.name);
+        firstnameEditView = view.findViewById(R.id.firstname);
+        lastnameEditView = view.findViewById(R.id.lastname);
         reservBtn = view.findViewById(R.id.reserver_btn);
-        buildingDropdown = view.findViewById(R.id.building);
         roomDropdown = view.findViewById(R.id.room);
         radioGroup = view.findViewById(R.id.radio);
 
         // Show dropdown
         showDateDropdown(dateBtn);
-        showBuildingDropdown(buildingDropdown);
         showRoomDropdown(roomDropdown);
 
         reservBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addReservation(nameEditView.getText().toString(), buildingDropdown.getSelectedItem().toString(),
+                addReservation(firstnameEditView.getText().toString(), lastnameEditView.getText().toString(),
                         roomDropdown.getSelectedItem().toString(), showDateDropdown(dateBtn), time);
             }
         });
@@ -145,10 +143,14 @@ public class NewReservationFragment extends Fragment {
                 String date = day + "/" + month + "/" + year;
                 NewReservationFragment.this.date = date;
                 dateBtn.setText("Valgt date: " + date);
-
-                building = buildingDropdown.getSelectedItem().toString();
                 room = roomDropdown.getSelectedItem().toString();
-                showAvailableHours(building, room, NewReservationFragment.this.date);
+                try {
+                    showAvailableHours(room, NewReservationFragment.this.date);
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
             }
         };
@@ -156,14 +158,14 @@ public class NewReservationFragment extends Fragment {
         return date;
     }
 
-    public void addReservation(String name, String building, String room,
+    public void addReservation(String firstname, String lastname, String room,
                                String date, String time) {
-        Service service = new Service();
+        String url = "http://student.cs.hioa.no/~s309854/jsonin.php?firstname=" + firstname + "&lastname=" + lastname
+                + "&room=" + room + "&date=" + date + "&time=" + time;
+        AddReservationService service = new AddReservationService();
         ReservationListFragment listeFragment = new ReservationListFragment();
-        String url = "http://student.cs.hioa.no/~s309854/jsonin.php?navn=" + name + "&bygning=" + building
-                + "&rom=" + room + "&dato=" + date + "&tidspunkt=" + time;
-        if (isFormValid(name, building, room, date, time)) {
-            service.execute(url);
+        if (isFormValid(firstname, lastname, room, date, time)) {
+           service.execute(url);
             showConfirmationAlert();
             showAllReservations(listeFragment);
         } else {
@@ -194,40 +196,20 @@ public class NewReservationFragment extends Fragment {
     }
 
 
-    public boolean isFormValid(String navn, String bygning, String rom,
+    public boolean isFormValid(String firstname, String lastname, String rom,
                                String dato, String tidspunkt) {
 
-        if (navn == null || navn.trim().equals("") || bygning.equals("Velg building")
+        if (!validateFirstName(firstname) || !validateLastName(lastname)
                 || rom.equals("Velg room") || dato == null || tidspunkt == null) {
             return false;
         }
         return true;
     }
 
-    public String showBuildingDropdown(Spinner spinner) {
-        final String[] bygning = new String[1];
-        String[] bygninger = new String[]{"Velg building", "P32", "P35", "P46", "P48", "P52"};
-        ArrayAdapter<String> bygningAdapter = new ArrayAdapter<String>(getContext(),
-                android.R.layout.simple_spinner_dropdown_item, bygninger);
-        spinner.setAdapter(bygningAdapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                bygning[0] = adapterView.getSelectedItem().toString();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-        return bygning[0];
-
-    }
 
     public String showRoomDropdown(Spinner spinner) {
         final String[] rom = new String[1];
-        String[] romListe = new String[]{"Velg room", "PH320", "PH350", "PH460", "PH480", "PH520"};
+        String[] romListe = new String[]{"Velg room", "PH320", "PH350", "PH460", "PI480", "PI520"};
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
                 android.R.layout.simple_spinner_dropdown_item, romListe);
         spinner.setAdapter(adapter);
@@ -248,18 +230,20 @@ public class NewReservationFragment extends Fragment {
     }
 
 
-    public void showAvailableHours(String building, String room, String date) {
+    public void showAvailableHours( String room, String date) throws ExecutionException, InterruptedException {
         MapActivity mapActivity = new MapActivity();
-        ArrayList<Reservation> reservations = mapActivity.hentReservasjoner();
+        //ArrayList<Reservation> reservations = mapActivity.getReservations();
+        /*
         for (Reservation r : reservations) {
             String tidspunkt = r.getFrom() + r.getTo();
-            if (r.getBuilding().equals(building) && r.getRoom().equals(room) && r.getDate().equals(date)) {
+            if (r.getRoom().equals(room) && r.getDate().equals(date)) {
                 disableHour(tidspunkt);
 
             } else {
                 ActivateHour(tidspunkt);
             }
         }
+        */
     }
 
     public void disableHour(String time) {
@@ -338,6 +322,21 @@ public class NewReservationFragment extends Fragment {
         }
 
     }
+
+    // validate first name
+    public  boolean validateFirstName( String firstName )
+    {
+        return firstName.matches( "[A-Z][a-zA-Z]*" );
+    }
+
+    // validate last name
+    public  boolean validateLastName( String lastName )
+    {
+        return lastName.matches( "[a-zA-z]+([ '-][a-zA-Z]+)*" );
+    }
+
+
+
 
 
 }
