@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import java.util.ArrayList;
+import java.util.List;
 
 import oslomet.no.s309854_mappe3.R;
 import oslomet.no.s309854_mappe3.model.Reservation;
@@ -17,23 +18,22 @@ public class ReservationListAdapter extends ArrayAdapter<Reservation> {
 
     private Context context;
     private int resource;
-    private ArrayList<Reservation> reservationArrayList;
+    private List<Reservation> reservationArrayList;
 
     /**
      * Holder variabler i View-et
      */
     private static class ViewHolder {
-        TextView name;
-        TextView building;
+        TextView firstname;
+        TextView lastname;
         TextView room;
         TextView date;
-        TextView from;
-        TextView to;
+        TextView time;
 
     }
 
     // Konstruktør
-    public ReservationListAdapter(Context context, int resource, ArrayList<Reservation> reservationArrayList) {
+    public ReservationListAdapter(Context context, int resource, List<Reservation> reservationArrayList) {
 
         super(context, resource, reservationArrayList);
         this.reservationArrayList = reservationArrayList;
@@ -50,10 +50,9 @@ public class ReservationListAdapter extends ArrayAdapter<Reservation> {
         String lastName = getItem(position).getLastName();
         String room = getItem(position).getRoom();
         String date = getItem(position).getDate();
-        String from = getItem(position).getFrom();
-        String to = getItem(position).getTo();
+        String time = getItem(position).getTime();
         final Reservation venn = new Reservation
-                (firstName, lastName, room, date, from, to );
+                (firstName, lastName, room, date, time );
 
         //ViewHolder object
         ViewHolder holder;
@@ -64,12 +63,12 @@ public class ReservationListAdapter extends ArrayAdapter<Reservation> {
             convertView = inflater.inflate(resource, parent, false);
             holder = new ViewHolder();
 
-            holder.name = convertView.findViewById(R.id.firstname);
-            holder.building = convertView.findViewById(R.id.lastname);
+            holder.firstname = convertView.findViewById(R.id.firstname);
+            holder.lastname = convertView.findViewById(R.id.lastname);
             holder.room = convertView.findViewById(R.id.room);
             holder.date = convertView.findViewById(R.id.date);
-            holder.from = convertView.findViewById(R.id.from);
-            holder.to = convertView.findViewById(R.id.to);
+            holder.time = convertView.findViewById(R.id.time);
+
 
 
             convertView.setTag(holder);
@@ -78,12 +77,12 @@ public class ReservationListAdapter extends ArrayAdapter<Reservation> {
         }
 
 
-        holder.name.setText("Fornavn: " + firstName);
-        holder.building.setText("Etternavn: " + lastName);
+        holder.firstname.setText("Fornavn: " + firstName);
+        holder.lastname.setText("Etternavn: " + lastName);
         holder.room.setText("Rom: " + room);
         holder.date.setText("Dato: " + date);
-        holder.from.setText("Fra: " + from);
-        holder.to.setText("Til: " + to);
+        holder.time.setText("Tidspunkt: " + time);
+
         return convertView;
     }
 

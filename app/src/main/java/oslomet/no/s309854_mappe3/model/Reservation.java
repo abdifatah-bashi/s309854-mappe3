@@ -3,24 +3,20 @@ package oslomet.no.s309854_mappe3.model;
 public class Reservation {
     private String firstName;
     private String lastName;
-
-
     private String room;
     private String date;
-    private String from;
-    private String to;
+    private String time;
 
-    public Reservation(String firstName, String lastName, String room, String date, String from, String to) {
+    public Reservation(String firstName, String lastName, String room, String date, String time) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.room = room;
         this.date = date;
-        this.from = from;
-        this.to = to;
+        this.time = time;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setFirstName(String name) {
+        this.firstName = name;
     }
 
     public void setLastName(String lastName) {
@@ -35,12 +31,8 @@ public class Reservation {
         this.date = date;
     }
 
-    public void setFrom(String from) {
-        this.from = from;
-    }
-
-    public void setTo(String to) {
-        this.to = to;
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public String getFirstName() {
@@ -59,11 +51,7 @@ public class Reservation {
         return date;
     }
 
-    public String getFrom() {
-        return from;
-    }
-
-    public String getTo() {
-        return to;
+    public String getTime() {
+        return time;
     }
 }

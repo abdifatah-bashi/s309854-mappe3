@@ -12,7 +12,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="21dp"
         android:layout_marginTop="20dp"
-        android:text="Fornavn"
+        android:text="Navn"
         android:textSize="16sp"
         android:textStyle="bold" />
 
@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/firstname"
         android:layout_below="@+id/firstname"
-        android:text="Etternavn"
+        android:text="Bygning"
         android:textSize="16sp"
         android:textStyle="bold" />
 
@@ -48,7 +48,7 @@
         android:textStyle="bold" />
 
     <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/from"
+        android:id="@+id/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/firstname"
@@ -57,15 +57,7 @@
         android:textSize="16sp"
         android:textStyle="bold" />
 
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/to"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/firstname"
-        android:layout_below="@+id/from"
-        android:text="Til Klokkeslett"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+
 
 
 

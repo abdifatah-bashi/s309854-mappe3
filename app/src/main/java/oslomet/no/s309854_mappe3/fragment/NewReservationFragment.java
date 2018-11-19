@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,17 +30,18 @@ import com.shashank.sony.fancydialoglib.FancyAlertDialog;
 import com.shashank.sony.fancydialoglib.FancyAlertDialogListener;
 import com.shashank.sony.fancydialoglib.Icon;
 
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.concurrent.ExecutionException;
+import java.util.List;
 
 import oslomet.no.s309854_mappe3.MapActivity;
 import oslomet.no.s309854_mappe3.R;
-import oslomet.no.s309854_mappe3.service.AddReservationService;
+import oslomet.no.s309854_mappe3.model.Reservation;
+import oslomet.no.s309854_mappe3.service.Service;
 
 public class NewReservationFragment extends Fragment {
 
     private DatePickerDialog.OnDateSetListener mDateSetListener;
-    private String building;
     private String room;
     private String date;
     private String time;
@@ -47,13 +49,14 @@ public class NewReservationFragment extends Fragment {
     private RadioButton hour2;
     private RadioButton hour3;
     private RadioButton hour4;
+    private Spinner buildingDropdown;
     private Spinner roomDropdown;
     private Button dateBtn;
     private Button reservBtn;
     private EditText firstnameEditView;
     private EditText lastnameEditView;
     private RadioGroup radioGroup;
-    String jsonResult = "";
+    Service service;
 
     public NewReservationFragment() { }
 
@@ -71,9 +74,11 @@ public class NewReservationFragment extends Fragment {
         hour4 = view.findViewById(R.id.time4);
         firstnameEditView = view.findViewById(R.id.firstname);
         lastnameEditView = view.findViewById(R.id.lastname);
+
         reservBtn = view.findViewById(R.id.reserver_btn);
         roomDropdown = view.findViewById(R.id.room);
         radioGroup = view.findViewById(R.id.radio);
+        service = new Service();
 
         // Show dropdown
         showDateDropdown(dateBtn);
@@ -143,14 +148,9 @@ public class NewReservationFragment extends Fragment {
                 String date = day + "/" + month + "/" + year;
                 NewReservationFragment.this.date = date;
                 dateBtn.setText("Valgt date: " + date);
+
                 room = roomDropdown.getSelectedItem().toString();
-                try {
-                    showAvailableHours(room, NewReservationFragment.this.date);
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                showAvailableHours(room, NewReservationFragment.this.date);
 
             }
         };
@@ -160,12 +160,12 @@ public class NewReservationFragment extends Fragment {
 
     public void addReservation(String firstname, String lastname, String room,
                                String date, String time) {
+
+        ReservationListFragment listeFragment = new ReservationListFragment();
         String url = "http://student.cs.hioa.no/~s309854/jsonin.php?firstname=" + firstname + "&lastname=" + lastname
                 + "&room=" + room + "&date=" + date + "&time=" + time;
-        AddReservationService service = new AddReservationService();
-        ReservationListFragment listeFragment = new ReservationListFragment();
-        if (isFormValid(firstname, lastname, room, date, time)) {
-           service.execute(url);
+        if (isFormValid(firstname, lastname , room, date, time)) {
+            service.execute(url);
             showConfirmationAlert();
             showAllReservations(listeFragment);
         } else {
@@ -196,10 +196,11 @@ public class NewReservationFragment extends Fragment {
     }
 
 
-    public boolean isFormValid(String firstname, String lastname, String rom,
+    public boolean isFormValid(String firstname, String lastname,  String rom,
                                String dato, String tidspunkt) {
 
-        if (!validateFirstName(firstname) || !validateLastName(lastname)
+        if (firstname == null || firstname.trim().isEmpty()
+                || lastname == null || lastname.trim().isEmpty()
                 || rom.equals("Velg room") || dato == null || tidspunkt == null) {
             return false;
         }
@@ -207,9 +208,10 @@ public class NewReservationFragment extends Fragment {
     }
 
 
+
     public String showRoomDropdown(Spinner spinner) {
         final String[] rom = new String[1];
-        String[] romListe = new String[]{"Velg room", "PH320", "PH350", "PH460", "PI480", "PI520"};
+        String[] romListe = new String[]{"Velg room", "PH320", "PH350", "PH460", "PH480", "PH520"};
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
                 android.R.layout.simple_spinner_dropdown_item, romListe);
         spinner.setAdapter(adapter);
@@ -230,20 +232,18 @@ public class NewReservationFragment extends Fragment {
     }
 
 
-    public void showAvailableHours( String room, String date) throws ExecutionException, InterruptedException {
+    public void showAvailableHours(String room, String date) {
         MapActivity mapActivity = new MapActivity();
-        //ArrayList<Reservation> reservations = mapActivity.getReservations();
-        /*
+        List<Reservation> reservations = mapActivity.hentReservasjoner();
         for (Reservation r : reservations) {
-            String tidspunkt = r.getFrom() + r.getTo();
-            if (r.getRoom().equals(room) && r.getDate().equals(date)) {
+            String tidspunkt = r.getTime();
+            if ( r.getRoom().equals(room) && r.getDate().equals(date)) {
                 disableHour(tidspunkt);
 
             } else {
                 ActivateHour(tidspunkt);
             }
         }
-        */
     }
 
     public void disableHour(String time) {
@@ -322,21 +322,6 @@ public class NewReservationFragment extends Fragment {
         }
 
     }
-
-    // validate first name
-    public  boolean validateFirstName( String firstName )
-    {
-        return firstName.matches( "[A-Z][a-zA-Z]*" );
-    }
-
-    // validate last name
-    public  boolean validateLastName( String lastName )
-    {
-        return lastName.matches( "[a-zA-z]+([ '-][a-zA-Z]+)*" );
-    }
-
-
-
 
 
 }
