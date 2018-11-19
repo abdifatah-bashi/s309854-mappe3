@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +36,7 @@ import java.util.List;
 import oslomet.no.s309854_mappe3.MapActivity;
 import oslomet.no.s309854_mappe3.R;
 import oslomet.no.s309854_mappe3.model.Reservation;
+import oslomet.no.s309854_mappe3.model.Room;
 import oslomet.no.s309854_mappe3.service.Service;
 
 public class NewReservationFragment extends Fragment {
@@ -112,6 +112,7 @@ public class NewReservationFragment extends Fragment {
                 }
             }
         });
+
 
 
         return view;
@@ -198,9 +199,10 @@ public class NewReservationFragment extends Fragment {
 
     public boolean isFormValid(String firstname, String lastname,  String rom,
                                String dato, String tidspunkt) {
+        String nameRegEx = "(?i)(^[a-z]+)[a-z .,-]((?! .,-)$){1,20}$";
 
-        if (firstname == null || firstname.trim().isEmpty()
-                || lastname == null || lastname.trim().isEmpty()
+        if (firstname == null || firstname.trim().isEmpty() || !firstname.matches(nameRegEx)
+                || lastname == null || lastname.trim().isEmpty() || !lastname.matches(nameRegEx)
                 || rom.equals("Velg room") || dato == null || tidspunkt == null) {
             return false;
         }
@@ -210,8 +212,9 @@ public class NewReservationFragment extends Fragment {
 
 
     public String showRoomDropdown(Spinner spinner) {
+        MapActivity mapActivity = new MapActivity();
         final String[] rom = new String[1];
-        String[] romListe = new String[]{"Velg room", "PH320", "PH350", "PH460", "PH480", "PH520"};
+        String[] romListe = getRoomNames(mapActivity.getRooms());
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
                 android.R.layout.simple_spinner_dropdown_item, romListe);
         spinner.setAdapter(adapter);
@@ -219,7 +222,6 @@ public class NewReservationFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 rom[0] = adapterView.getSelectedItem().toString();
-
             }
 
             @Override
@@ -234,7 +236,7 @@ public class NewReservationFragment extends Fragment {
 
     public void showAvailableHours(String room, String date) {
         MapActivity mapActivity = new MapActivity();
-        List<Reservation> reservations = mapActivity.hentReservasjoner();
+        List<Reservation> reservations = mapActivity.getReservations();
         for (Reservation r : reservations) {
             String tidspunkt = r.getTime();
             if ( r.getRoom().equals(room) && r.getDate().equals(date)) {
@@ -322,6 +324,12 @@ public class NewReservationFragment extends Fragment {
         }
 
     }
+
+    public String [] getRoomNames(List<Room> rooms){
+        StringBuilder roomArray = new StringBuilder();
+        for(Room r: rooms){
+            roomArray.append(r.getName()).append(","); }
+        return roomArray.toString().split(","); }
 
 
 }

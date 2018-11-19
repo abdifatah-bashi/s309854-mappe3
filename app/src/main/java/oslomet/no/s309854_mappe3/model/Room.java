@@ -5,12 +5,14 @@ public class Room {
     private String details;
     private String latitude;
     private String longitude;
+    private String reservationInfo;
 
     public Room(String name, String details, String latitude, String longitude) {
         this.name = name;
         this.details = details;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.reservationInfo = "";
     }
 
     public void setName(String name) {
@@ -29,6 +31,10 @@ public class Room {
         this.longitude = longitude;
     }
 
+    public void setReservationInfo(String reservationInfo) {
+        this.reservationInfo = reservationInfo;
+    }
+
     public String getName() {
         return name;
     }
@@ -43,5 +49,9 @@ public class Room {
 
     public String getLongitude() {
         return longitude;
+    }
+
+    public String getReservationInfo() {
+        return reservationInfo;
     }
 }

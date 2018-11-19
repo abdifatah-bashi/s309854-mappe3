@@ -16,11 +16,9 @@ import oslomet.no.s309854_mappe3.R;
  */
 public class AddFragment extends Fragment {
 
-
     public AddFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

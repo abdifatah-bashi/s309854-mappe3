@@ -21,24 +21,30 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 import oslomet.no.s309854_mappe3.adapter.MapMarkerViewAdapter;
+import oslomet.no.s309854_mappe3.fragment.AddFragment;
 import oslomet.no.s309854_mappe3.fragment.NewReservationFragment;
 import oslomet.no.s309854_mappe3.fragment.ReservationListFragment;
 import oslomet.no.s309854_mappe3.model.Reservation;
+import oslomet.no.s309854_mappe3.model.Room;
 import oslomet.no.s309854_mappe3.service.Service;
 
 public class MapActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private ReservationListFragment reservationListFragment;
     private NewReservationFragment newReservationFragment;
+    private AddFragment addFragment;
     private BottomNavigationView mainNav;
     private GoogleMap mMap;
     Service service = new Service();
+    List<Room> rooms;
+    List<Reservation> reservations;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +53,12 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        reservations = new ArrayList<>();
+        rooms = new ArrayList<>();
+
         reservationListFragment = new ReservationListFragment();
         newReservationFragment = new NewReservationFragment();
+        addFragment = new AddFragment();
         mainNav = findViewById(R.id.main_nav);
 
         mainNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -61,11 +71,11 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                         return true;
 
                     case R.id.reserver:
-                        visFragment(newReservationFragment);
+                        showFragment(addFragment);
                         mapFragment.getView().setVisibility(View.INVISIBLE);
                         return true;
                     case R.id.liste:
-                        visFragment(reservationListFragment);
+                        showFragment(reservationListFragment);
                         mapFragment.getView().setVisibility(View.INVISIBLE);
                         return  true;
 
@@ -77,12 +87,9 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 
 
 
-
     }
 
-
-
-    public void visFragment(Fragment fragment){
+    public void showFragment(Fragment fragment){
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.main_frame, fragment);
         if(fragment.isHidden()){
@@ -96,88 +103,18 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         String output= "";
-        List<Reservation> reservasjoner = hentReservasjoner();
-        String p32Reservasjon = "Ingen reservasjon i dag!";
-        String p35Reservasjon = "Ingen reservasjon i dag!";
-        String p46Reservasjon = "Ingen reservasjon i dag!";
-        String p48Reservasjon = "Ingen reservasjon i dag!";
-        String p52Reservasjon = "Ingen reservasjon i dag!";
-
-        // Add a marker in Sydney and move the camera
-        LatLng P35 = new LatLng(59.9196143, 10.7350223);
-        LatLng P46 = new LatLng(   59.9212465, 10.733519600000022);
-        LatLng P32 = new LatLng(   59.9200718, 10.735783800000036);
-        LatLng P48 = new LatLng(   59.9214455, 10.732669999999985);
-        LatLng P52 = new LatLng(   59.9223554, 10.732217699999978);
-            for(Reservation r: reservasjoner ){
-                String reservasjonInfo = "Info";
-                switch (r.getRoom() ){
-                    case "PH320":
-                        if(hentDagensDato().equals(r.getDate())){
-                            p32Reservasjon = reservasjonInfo;
-                        }
-                        break;
-                    case "PH350":
-                        if(hentDagensDato().equals(r.getDate())){
-                            p35Reservasjon = reservasjonInfo;
-                        }
-                        break;
-                    case "PH460":
-                        if(hentDagensDato().equals(r.getDate())){
-                            p46Reservasjon = reservasjonInfo;
-                        }
-                        break;
-                    case "PI480":
-                        if(hentDagensDato().equals(r.getDate())){
-                            p48Reservasjon = reservasjonInfo;
-                        }
-                        break;
-                    case "PI520":
-                        if(hentDagensDato().equals(r.getDate())){
-                            p52Reservasjon = reservasjonInfo;
-                        }
-                        break;
-
-                }
-            }
+        setMarkers(getRooms());
 
 
-
-
-        mMap.addMarker(new MarkerOptions().position(P32).title("P32")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
-                .snippet(p32Reservasjon)
-        );
-        mMap.addMarker(new MarkerOptions().position(P35).title("P35")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
-                .snippet(p35Reservasjon));
-        mMap.addMarker(new MarkerOptions().position(P46).title("P46")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
-                .snippet(p46Reservasjon));
-        mMap.addMarker(new MarkerOptions().position(P48).title("P48")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
-                .snippet(p48Reservasjon));
-        mMap.addMarker(new MarkerOptions().position(P52).title("P52")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
-                .snippet(p52Reservasjon));
-
-        mMap.setInfoWindowAdapter(new MapMarkerViewAdapter(getLayoutInflater()));
-        float zoomLevel = 16.0f;
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(P32, zoomLevel));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(P35, zoomLevel));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(P46, zoomLevel));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(P48, zoomLevel));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(P52, zoomLevel));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(P32, zoomLevel));
     }
 
-    public List<Reservation> hentReservasjoner(){
-        String result = null;
-        List<Reservation> reservations = new ArrayList<>();
+    public void init(){
         try {
-            result = service.execute(new
-                    String[]{"http://student.cs.hioa.no/~s309854/jsonout.php"}).get();
-            reservations = service.getReservations();
+            service.execute(new
+                    String[]{"http://student.cs.hioa.no/~s309854/jsonout.php", "http://student.cs.hioa.no/~s309854/rom.php"}).get();
+            this.reservations = service.getReservations();
+            this.rooms = service.getRooms();
+
 
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -185,12 +122,66 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
             e.printStackTrace();
         }
 
-        return reservations;
 
     }
 
-    public String hentDagensDato(){
+    public List<Room> getRooms(){
+        init();
+
+        for(Room r: rooms ){
+            Log.i("rooms: " , r.getName() + " " + r.getDetails() );
+        }
+        return this.rooms;
+
+    }
+
+    public List<Reservation> getReservations(){
+        init();
+        return this.reservations;
+    }
+
+    public String getCurrentDate(){
         return new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
 
     }
+
+    public void setMarkers(List<Room> rooms){
+        for(Room r: rooms ){
+            Double latitude = Double.parseDouble(r.getLatitude());
+            Double longitude = Double.parseDouble(r.getLongitude());
+            LatLng latLng = new LatLng(latitude, longitude);
+            mMap.addMarker(new MarkerOptions().position(latLng).title(r.getName())
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
+                    .snippet(setReservationInfo(r.getName()))
+            );
+            mMap.setInfoWindowAdapter(new MapMarkerViewAdapter(getLayoutInflater()));
+            float zoomLevel = 16.0f;
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
+
+        }
+    }
+
+
+    public String setReservationInfo(String roomName){
+        Room room = getRoom(roomName);
+        for (Reservation r : reservations) {
+            if(r.getRoom().equals(roomName) && r.getDate().equals(getCurrentDate())) {
+                String from = r.getTime().split("-")[0];
+                String to = r.getTime().split("-")[1];
+                room.setReservationInfo(room.getReservationInfo() + "Fra: " + from
+                        + "\n Til:  " + to +  "\n -------------- \n");
+                }
+            }
+            return room.getReservationInfo();
+        }
+
+  public Room getRoom(String roomName){
+        Room room = null;
+        for(Room r: rooms) if(r.getName().equals(roomName)) {
+            room = r;
+        }
+        return room;
+  }
+
+
 }

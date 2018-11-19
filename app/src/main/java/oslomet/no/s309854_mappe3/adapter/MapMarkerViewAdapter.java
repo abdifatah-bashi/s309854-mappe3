@@ -22,10 +22,11 @@ public class MapMarkerViewAdapter implements InfoWindowAdapter {
         if (marker != null) {
             textViewTitle = (TextView) v.findViewById(R.id.textViewTitle);
             String snippet = marker.getSnippet();
-            if(!snippet.equals("Ingen reservasjon i dag!")){
-                textViewTitle.setText("Reservation info: \n" + snippet);
+
+            if(snippet.trim().isEmpty() ){
+                textViewTitle.setText("Ingen reservasjon i dag!");
             } else {
-                textViewTitle.setText(snippet);
+                textViewTitle.setText("Dagens reservasjoner: \n  "+snippet);
             }
 
         }

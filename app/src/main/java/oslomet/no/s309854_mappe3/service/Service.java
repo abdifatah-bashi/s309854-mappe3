@@ -26,9 +26,10 @@ public class Service extends AsyncTask<String, Void,String> {
         String s = "";
         ArrayList<String> list = new ArrayList<>();
         String output = "";
-        for (String url : urls) {
+
+        for(int i= 0; i<urls.length; i++){
             try {
-            URL theUrl = new URL(urls[0]);
+            URL theUrl = new URL(urls[i]);
             HttpURLConnection conn = (HttpURLConnection)
                     theUrl.openConnection();
             conn.setRequestMethod("GET");
@@ -46,31 +47,40 @@ public class Service extends AsyncTask<String, Void,String> {
                 if(!output.isEmpty()){
 
                     JSONArray json = new JSONArray(output);
-                    for (int i = 0; i < json.length(); i++) {
-                        JSONObject jsonobject = json.getJSONObject(i);
-                        if(url.equals("http://student.cs.hioa.no/~s309854/jsonout.php")){
-                            String firstName = jsonobject.getString("firstname");
-                            String lastName = jsonobject.getString("lastname");
-                            String room = jsonobject.getString("room");
-                            String date = jsonobject.getString("date");
-                            String time = jsonobject.getString("time");
-                            reservations.add(new Reservation(firstName, lastName, room, date, time) );
-                        }  else if(url.equals("http://student.cs.hioa.no/~s309854/rom.php")){
+
+                        if(urls[i].equals("http://student.cs.hioa.no/~s309854/jsonout.php")) {
+                            for (int j = 0; j < json.length(); j++) {
+                                JSONObject jsonobject = json.getJSONObject(j);
+                                String firstName = jsonobject.getString("firstname");
+                                String lastName = jsonobject.getString("lastname");
+                                String room = jsonobject.getString("room");
+                                String date = jsonobject.getString("date");
+                                String time = jsonobject.getString("time");
+                                reservations.add(new Reservation(firstName, lastName, room, date, time));
+                            }
+                        }
+                        else if(urls[i].equals("http://student.cs.hioa.no/~s309854/rom.php")){
+                                for (int j = 0; j < json.length(); j++) {
+                                    JSONObject jsonobject = json.getJSONObject(j);
                             String name = jsonobject.getString("name");
                             String details = jsonobject.getString("details");
                             String latitude = jsonobject.getString("latitude");
                             String longitude = jsonobject.getString("longitude");
                             rooms.add(new Room(name , details, latitude, longitude));
+                            List<Room> testRoom = rooms;
                         }
 
                     }
+                    output = "";
+                } else {
+                    return retur;
                 }
 
-                return retur;
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            return retur;
+
         } catch (Exception e) {
             return "Noe gikk feil";
             }
